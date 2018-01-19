@@ -1,0 +1,93 @@
+题目描述
+有 n 个学生站成一排，每个学生有一个能力值，牛牛想从这 n 个学生中按照顺序选取 k 名学生，要求相邻两个学生的位置编号的差不超过 d，
+使得这 k 个学生的能力值的乘积最大，你能返回最大的乘积吗？
+输入描述:
+每个输入包含 1 个测试用例。每个测试数据的第一行包含一个整数 n (1 <= n <= 50)，表示学生的个数，接下来的一行，包含 n 个整数，按顺序
+表示每个学生的能力值 ai（-50 <= ai <= 50）。接下来的一行包含两个整数，k 和 d (1 <= k <= 10, 1 <= d <= 50)。
+输出描述:
+输出一行表示最大的乘积。
+示例1
+输入
+
+3
+7 4 7
+2 50
+输出
+
+49
+
+这是一道动态规划题。相当于2层动态规划
+依次选取1,2,....最后才能到输入的学生数值。
+要一步步来。
+然后在选取i(i <= 输入的学生数值时)，分别计算每个学生坐标为终点，在其左边选取i - 1个值的。
+用二维数组
+positive[student + 1][输入学生数目 + 1] 例如positve[5][3] = number，以坐标5为终点，坐标5左边(1,2,3,4)中选取2个学生的值乘以坐标5的值得到的
+最大值number
+negtive[student + 1][输入学生数目 + 1],例如negtive[5][3] = number，以坐标5为终点，坐标5左边(1,2,3,4)中选取2个学生的值乘以坐标5的值得到的
+值number
+
+思路在代码中，嗯，这道题不简单
+
+
+代码：
+
+import java.util.Scanner;
+
+public class Main {
+	public static void main(String[] args){
+        Scanner reader = new Scanner(System.in);
+        while(reader.hasNext()){
+            int student = reader.nextInt();
+            int[] power = new int[student + 1];
+            for(int i = 1; i <= student; i++){
+                power[i] = reader.nextInt();//从坐标1开始，记录每个学生的能力值
+            }
+            int select_student = reader.nextInt();//选择k个学生的能力值求乘
+            int distance = reader.nextInt();//约束,学生之间的间距不能大于d
+            ////从某个坐标起，其向左，选select_student最大的
+            long[][] positive = new long[student + 1][select_student + 1];
+            ////从某个坐标起，其向左，选select_student最小的
+            long[][] negtive = new long[student + 1][select_student + 1];
+            //初始化,选一个1的时候
+            for(int i = 1; i <= student; i++){
+                positive[i][1] = power[i];//每个坐标开始，只选1个人时，最大的为自己
+                negtive[i][1] = power[i];//每个坐标开始，只选1个人时，最小的为自己
+            }
+            for(int i = 2; i <= select_student; i++){//从选几个人开始，一步步增加
+                for(int k = i; k <= student; k++){//如果要选2个人，则从坐标2开始
+                    long temp_max = Long.MIN_VALUE;
+                    long temp_min = Long.MAX_VALUE;
+                    
+                    //left = Math.max(i - 1, k - distance)是为了防止越界
+                    //Math.max(i - 1, k - distance)，肯定是要有k - distance的，因为学生编号之间要满足约束，然后
+                    //为什么i - 1呢，因为有的学生坐标是不存在以那个位置为终点选取几个学生的值计算乘法的。例如如果学生位置为2，要在其左边
+                    //选2个学生(其左边只有1坐标学生)，不可能，positive[2][3](即只有1坐标和2坐标)不存在。所以坐标起点判定标准中要有i - 1,
+                    //从i - 1开始坐标的学生才有positive[][i - 1]，因为从坐标1开始到i-1有i-1个学生。所以为了positive[][i - 1]，坐标要从
+                    //i - 1开始，所以是.max，既要有positive[][i - 1]，又要满足约束
+                    //left <= k - 1的意思是选择i个人，最后一个人已经确定是k了，在k坐标左边选择i-1个人
+                    
+                    for(int left = Math.max(i - 1, k - distance); left <= k - 1; left++){
+                        //positive[left][i - 1]以left为终点，在left坐标选择i - 1个值乘积最大
+                        if(temp_max < Math.max(positive[left][i - 1]*power[k], negtive[left][i - 1]*power[k])){
+                            temp_max = Math.max(positive[left][i - 1]*power[k], negtive[left][i - 1]*power[k]);
+                        }
+                        if(temp_min > Math.min(positive[left][i - 1]*power[k], negtive[left][i - 1]*power[k])){
+                            temp_min = Math.min(positive[left][i - 1]*power[k], negtive[left][i - 1]*power[k]);
+                        }
+                        positive[k][i] = temp_max;//以k坐标为终点，其左边选择i - 1个值的乘积与k坐标位置乘积的最大值
+                        negtive[k][i] = temp_min;
+                    }
+                    
+                }
+                
+            }
+            long result = Long.MIN_VALUE;
+            for(int i = select_student; i <= student; i++){
+                if(result < positive[i][select_student]){
+                    result = positive[i][select_student];
+                }
+            }
+            System.out.println(result);
+        }
+    }
+}
