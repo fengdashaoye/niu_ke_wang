@@ -1,0 +1,53 @@
+题目描述
+小易有一个圆心在坐标原点的圆，小易知道圆的半径的平方。小易认为在圆上的点而且横纵坐标都是整数的点是优雅的，小易现在想寻找一个算法计
+算出优雅的点的个数，请你来帮帮他。
+例如：半径的平方如果为25
+优雅的点就有：(+/-3, +/-4), (+/-4, +/-3), (0, +/-5) (+/-5, 0)，一共12个点。
+输入描述:
+输入为一个整数，即为圆半径的平方,范围在32位int范围内。
+输出描述:
+输出为一个整数，即为优雅的点的个数
+示例1
+输入
+
+25
+输出
+
+12
+
+思路：这道题起始很简单，只需要有两个方面需要注意，一个是如何判断一个数字是完全平方，即它等于另一个数字的平方。我们可以这样
+将其开方，然后将开方数向下取整，然后再平方，看其与原值是否相等。
+然后注意边界问题，题目中有写
+
+代码：
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args){
+        Scanner in = new Scanner(System.in);
+        int radius_pingfang = in.nextInt();
+        double radius = Math.sqrt(radius_pingfang);
+        int start = 0;
+        if(radius == Math.floor(radius)){
+            start = 4;
+        }
+        //(0,radius)(0,-radius),(radius, 0),(-radius, 0)
+        //注意边界，当输入25和365时是不同的，一个半径的整数，一个半径不是整数
+        int bianjie = 0;
+        if(radius == Math.floor(radius)){
+            bianjie = (int)radius - 1;
+        }else{
+            bianjie = (int)Math.floor(radius);
+        }
+        for(int i = 1; i <= bianjie; i++){
+            int number = radius_pingfang - i*i;
+            double number1 = Math.sqrt(number);
+            int number2 = (int)Math.floor(number1);
+            if(number2 * number2 == number){
+                start += 4;
+            }
+        }
+        System.out.println(start);
+        
+    }
+}
