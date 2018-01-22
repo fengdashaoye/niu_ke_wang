@@ -65,6 +65,7 @@ public class Main{
                             }
                             if(t == first_char.length() && t < pre_max.length()){//12和123,123应放在前面
                                 if(t > 0 && (pre_max.charAt(t) - '0' <= pre_max.charAt(0) - '0')){//避免93,93,936
+                                ////正确排序应该是 9393936,而非9369393,注意是<=号，而非<号
                                     max = first_char.charAt(0) - '0';
                                     position = i;
                                     pre_max = first_char;
