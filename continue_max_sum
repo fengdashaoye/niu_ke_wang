@@ -1,0 +1,65 @@
+题目描述
+一个数组有 N 个元素，求连续子数组的最大和。 例如：[-1,2,1]，和最大的连续子数组为[2,1]，其和为 3
+输入描述:
+输入为两行。 第一行一个整数n(1 <= n <= 100000)，表示一共有n个元素 第二行为n个数，即每个元素,每个整数都在32位int范围内。以空格分隔。
+输出描述:
+所有连续子数组中和最大的值。
+示例1
+输入
+
+3 -1 2 1
+输出
+
+3
+
+思路：这道题以前做过，所以调试一会就过了。
+很简单，遍历一次数组，定义最大连续子集最大值，以及一个遍历temp，其代表遍历到一个坐标i后，将坐标i的值加入连续子集后，当前连续子集
+最大值（注意，当前）。在遍历过程中，首先我们能判断的只有当前这个值是正还是负数，如果是负数，首先判断当前这个值是否大于最大值，
+如果这个负数大于最大值，
+则之前的都为负数，则将该负数更新为最大值以及temp，如果这个负数没有大于最大值，则将其加入temp中判断temp + 该负数是否大于0，如果大于0，
+则更新temp，temp += content[i]，代表加入i坐标值之后，连续子集最大和，如果小于0，判断content[i] > temp + content[i],如果是
+则temp = content[i]，连续子集的起点更新成坐标i，如果否，连续子集的起点不更新。
+
+如果该值为正数，则很好解决，直接更新temp，然后判断content和更新后的temp谁大，如果content大，则temp = content[i]，再次更新。
+最后判断temp与max_value，最后更新max_value。。。
+
+代码：
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args){
+        Scanner in = new Scanner(System.in);
+        int number = in.nextInt();
+        int[] content = new int[number];
+        for(int i = 0; i < number; i++){
+            content[i] = in.nextInt();
+        }
+        int max_value = content[0];
+        int temp = max_value;
+        for(int i = 1; i < number; i++){
+            if(content[i] < 0){
+                if(content[i] > max_value){
+                    max_value = content[i];
+                }
+                if(temp + content[i] >= 0){
+                    temp += content[i];//i坐标之后可能有大的正数，所以连续子集的起点不更新
+                }else{
+                    if(content[i] > temp + content[i]){
+                        temp = content[i];
+                    }else{
+                        temp += content[i];
+                    }
+                }
+            }else{
+                temp += content[i];
+                if(content[i] > temp){
+                    temp = content[i]; 
+                }
+                if(temp > max_value){
+                    max_value = temp;
+                }
+            }
+        }
+        System.out.println(max_value);
+    }
+}
