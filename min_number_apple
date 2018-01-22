@@ -1,0 +1,47 @@
+题目描述
+小易去附近的商店买苹果，奸诈的商贩使用了捆绑交易，只提供6个每袋和8个每袋的包装(包装不可拆分)。 可是小易现在只想购买恰好n个苹果，
+小易想购买尽量少的袋数方便携带。如果不能购买恰好n个苹果，小易将不会购买。
+输入描述:
+输入一个整数n，表示小易想购买n(1 ≤ n ≤ 100)个苹果
+输出描述:
+输出一个整数表示最少需要购买的袋数，如果不能买恰好n个苹果则输出-1
+示例1
+输入
+
+20
+输出
+
+3
+
+思路：这道题很简单，因为只有6个和8个两类，number从0开始循环，终止条件为6 * number <= total，因为最小类的袋子个数为6个。
+当number等于某个数时，出去袋子大小为6里装的苹果数目为total - number * 6,我们用其除以8看是否为整数即可。。。
+
+代码：
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args){
+        Scanner in = new Scanner(System.in);
+        int total = in.nextInt();
+        int number = 0;
+        int panduan = 0;
+        int pre = Integer.MAX_VALUE;
+        int total_number = 0;
+        while(number * 6 <= total){
+            if((total - number * 6) % 8 == 0){
+                panduan = 1;
+                total_number = number + ((total - number * 6) / 8);
+                if(total_number < pre){
+                    pre = total_number;
+                }
+                break;
+            }
+            number++;
+        }
+        if(panduan == 0){
+            System.out.println(-1);
+        }else{
+            System.out.println(pre);
+        }
+    }
+}
