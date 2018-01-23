@@ -1,0 +1,83 @@
+题目描述
+小易来到了一条石板路前，每块石板上从1挨着编号为：1、2、3.......
+这条石板路要根据特殊的规则才能前进：对于小易当前所在的编号为K的 石板，小易单次只能往前跳K的一个约数(不含1和K)步，即跳到K+X(X为K的一个
+非1和本身的约数)的位置。 小易当前处在编号为N的石板，他想跳到编号恰好为M的石板去，小易想知道最少需要跳跃几次可以到达。
+例如：
+N = 4，M = 24：
+4->6->8->12->18->24
+于是小易最少需要跳跃5次，就可以从4号石板跳到24号石板
+输入描述:
+输入为一行，有两个整数N，M，以空格隔开。 (4 ≤ N ≤ 100000) (N ≤ M ≤ 100000)
+输出描述:
+输出小易最少需要跳跃的步数,如果不能到达输出-1
+示例1
+输入
+
+4 24
+输出
+
+5
+
+思路：这道题挺难的，首先N和M的值很大，要用动态规划的话，最好是用数组，担心空间复杂度。然后需要找一个数字的约数，嗯，又要担心时间复杂度。
+他的方法就很好。
+首先创建数组时数组大小为end - start + 1，那么content[0]对应的就是content[start]。这个方法很聪明。
+后面计算约数时，石板号码为start + i。
+在计算一个数字的所有约数时，她的方法也很好，从2开始，止于Math.sqrt(number)，如果如果number % i != 0，则i是约数，另一个则是number / i.
+如果number / i != i，则list.add(number / i)。
+然后到了很重要的动态规划问题。。。
+依次遍历每个位置，用list存储该位置的约数，然后对于每个约数remainder，i + remainder位置的值(跳到这最小的部署)为Math.min(content[i + remainder]
+, content[i] + 1)。
+
+嗯，这道题还是有点复杂的。。。。。
+
+代码：
+import java.util.*;
+public class Main{
+    public static void main(String[] args){
+        Main test = new Main();
+        Scanner in = new Scanner(System.in);
+        int start = in.nextInt();
+        int end = in.nextInt();
+        if(start == end){
+            System.out.println(0);
+            return;
+        }
+        int number = end - start + 1;
+        int[] content = new int[number];
+        content[0] = 0;//起点
+        int pre = start;
+        for(int i = 1; i < number; i++){
+            content[i] = Integer.MAX_VALUE;//初始化，一开始都不可达
+        }
+        for(int i = 0; i < number; i++){
+            if(content[i] == Integer.MAX_VALUE){
+                content[i] = 0;//该石板不可达
+                continue;
+            }
+            ArrayList<Integer> list_remainder = test.getRemainder(i + start);//i + start才是石板号码
+            for(int j = 0; j < list_remainder.size(); j++){
+                int remainder = list_remainder.get(j);
+                if(i + start + remainder <= end){
+                    content[i + remainder] = Math.min(content[i + remainder], content[i] + 1);
+                }
+            }
+        }
+        if(content[content.length - 1] == 0){
+            System.out.println(-1);
+        }else{
+            System.out.println(content[content.length - 1]);
+        }
+    }
+    public ArrayList<Integer> getRemainder(int number){//求因子，这个时间很快
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        for(int i = 2; i <= Math.sqrt(number); i++){//例如8，约数为1,2,4,8，这里i = 2, <= 2.......
+            if(number % i == 0){
+                list.add(i);
+                if((number / i) != i){//因为8/2 != 2，所以8/2 = 4也要加进去
+                    list.add(number / i);
+                }
+            }
+        }
+        return list;
+    }
+}
