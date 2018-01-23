@@ -1,0 +1,76 @@
+题目描述
+n 只奶牛坐在一排，每个奶牛拥有 ai 个苹果，现在你要在它们之间转移苹果，使得最后所有奶牛拥有的苹果数都相同，每一次，你只能从一只奶牛身上
+拿走恰好两个苹果到另一个奶牛上，问最少需要移动多少次可以平分苹果，如果方案不存在输出 -1。
+输入描述:
+每个输入包含一个测试用例。每个测试用例的第一行包含一个整数 n（1 <= n <= 100），接下来的一行包含 n 个整数 ai（1 <= ai <= 100）。
+输出描述:
+输出一行表示最少需要移动多少次可以平分苹果，如果方案不存在则输出 -1。
+示例1
+输入
+
+4
+7 15 9 5
+输出
+
+3
+
+思路：这道题非常简单，只是分苹果而已，把苹果多的分给苹果少的，那么一开始将数组排序，然后不断将后面的苹果分给前面的即可。
+然后就是需要注意各种边界情况，如平均数目非整数，如每次分两个导致后面的苹果少于平均数，都需要输出-1
+
+代码：
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args){
+        Scanner in = new Scanner(System.in);
+        int number = in.nextInt();
+        int[] cow = new int[number];
+        int sum = 0;
+        for(int i = 0; i < number; i++){
+            cow[i] = in.nextInt();
+            sum += cow[i];
+        }
+        int average = sum / number;
+        if(average * number != sum){
+            System.out.println(-1);
+            return;
+        }
+        Arrays.sort(cow);
+        int low = 0;
+        int high = cow.length - 1;
+        int count = 0;
+        int panduan = 0;
+        while(low < high){
+            if(cow[low] < average && cow[high] > average){
+                cow[low] += 2;
+                cow[high] -= 2;
+                if(cow[low] == average){
+                    low++;//这里是cow[low]变成average后就可以往前移动了
+                }
+                if(cow[high] == average){
+                    high--;
+                }
+                if(cow[low] > average || cow[high] < average){//1,3,4,4因为每次移动2个，可能无法
+                    panduan = 1;
+                    break;
+                }
+                count++;
+            }else if(cow[low] < average && cow[high] == average){//6,6,6,6
+                high--;
+            }else if(cow[low] < average && cow[high] < average){//2,4,6,6,6,6
+                panduan = 1;//输出-1
+                break;
+            }else if(cow[low] == average){//在之前那cow[low] == average那low坐标就可以往迁移
+                break;//这里是cow[low]没有变化后就已经是average，后面的都为average
+            }
+        }
+        if(panduan == 1){
+            System.out.println(-1);
+        }else{
+            System.out.println(count);
+        }
+        
+        
+        
+    }
+}
