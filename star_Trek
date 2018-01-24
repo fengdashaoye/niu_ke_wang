@@ -1,0 +1,29 @@
+输入描述:
+每个输入包含一个测试用例。每个测试用例包含一行一个整数 h （1 <= h <= 10^18）。
+输出描述:
+输出一行一个整数表示结果。
+示例1
+输入
+
+10
+输出
+
+2
+
+思路：这道题需要注意的是输入的需要是long数据类型，设初始发射损耗为x，则x + x*x < 输入，即x*(x + 1) < 输入.
+我们从Math.sqrt(number)开始，一步步往小方向走，直到找到目标值即可。。。
+
+代码：
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args){
+        Scanner in = new Scanner(System.in);
+        long number = in.nextLong();
+        long half = (long)Math.floor(Math.sqrt(number));
+        while(half * half + half > number){
+            half--;
+        }
+        System.out.println(half);
+    }
+}
