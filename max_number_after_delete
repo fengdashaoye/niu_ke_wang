@@ -13,6 +13,9 @@
 
 35
 
+注意事项，输入值的length最大为1000，所以不能输入int或者long，直接用in.next()，不断输入不断存入StringBuffer。
+StringBuffer删除时可以delete(start, end)，这是删除一段，也可以deleteCharAt(position)，这是删除某一位
+
 代码：这是我的答案，只过了50%
 思路是没错的，每次删掉一个数字保证最大值。然后删除的值需要满足要求：其相邻右侧值大于自己值，否则就是最后一位。
 他的case有问题。。。
