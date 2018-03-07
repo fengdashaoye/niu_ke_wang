@@ -1,0 +1,103 @@
+题目描述
+给定一个有n个正整数的数组A和一个整数sum,求选择数组A中部分数字和为sum的方案数。
+当两种选取方案有一个数字的下标不一样,我们就认为是不同的组成方案。
+输入描述:
+输入为两行:
+ 第一行为两个正整数n(1 ≤ n ≤ 1000)，sum(1 ≤ sum ≤ 1000)
+ 第二行为n个正整数A[i](32位整数)，以空格隔开。
+输出描述:
+输出所求的方案数
+示例1
+输入
+
+5 15 5 5 10 2 3
+输出
+
+4
+
+思路：正常使用递归，即在循环里面嵌套递归函数，只通过了20%，需要别的方法。。
+需要用到动态规划，嗯，起始之前也遇到这样的题，就是那道小偷连着一排屋子偷东西，不能偷相连的屋子，求能偷到最大的钱财。
+
+代码：
+import java.util.*;
+
+public class Main{
+    public static int total = 0;
+    public static void main(String[] args){
+        Scanner in = new Scanner(System.in);
+        while(in.hasNext()){
+            int number = in.nextInt();
+            int sum = in.nextInt();
+            int[] content = new int[number];
+            for(int i = 0; i < number; i++){
+                content[i] = in.nextInt();
+            }
+            for(int i = 0; i < number; i++){
+                isRight(i, content, sum, 0);
+            }
+            System.out.println(total);
+        }
+    }
+    public static void isRight(int start, int[] content, int sum, int middle){
+        if(middle > sum){
+            return;
+        }
+        if(middle == sum){
+            total++;
+            return;
+        }
+        for(int i = start; i < content.length; i++){
+            isRight(i + 1, content, sum, middle + content[i]);
+        }
+        
+    }
+}
+
+思路：忘了这种解法
+代码：
+import java.util.*;
+
+public class Main{
+    public static long[][] dp;
+    //dp[i][j] = m表示用前i个值(不一定全选，从前i个数字中选取部分)组成和为j的方案个数
+    public static void main(String[] args){
+        Scanner in = new Scanner(System.in);
+        int number = in.nextInt();
+        int sum = in.nextInt();
+        int[] content = new int[1000];
+        for(int i = 1; i <= number; i++){
+            content[i] = in.nextInt();
+        }
+
+        dp = new long[1000][1000];
+        //因为都是正整数，拿到和为0的方案只有1个，即什么都不选
+        for(int i = 0; i < number; i++){
+            dp[i][0] = 1;
+        }
+        //不选任何数，和无法超过0，所以方案数目为0
+        for(int i = 1; i < sum; i++){
+            dp[0][i] = 0;
+        }
+        for(int i = 1; i <= number; i++){
+            for(int j = 0; j <= sum; j++){
+                if(content[i] <= j){
+                    //如果当前值小于等于目标和(目标和会递增)，则方案数目=dp[i - 1][j] + dp[i - 1][j - content[i]]
+                    //即前i-1个数字和为j的方案数目加上前i-1个数字和为j - content[i]的方案数目(因为其加上content[i]，和即为j)
+                    dp[i][j] = dp[i - 1][j] + dp[i - 1][j - content[i]];
+                }else{
+                    dp[i][j] = dp[i - 1][j];
+                }
+            }
+        }
+        System.out.println(dp[number][sum]);
+    }
+}
+
+
+
+
+
+
+
+
+
