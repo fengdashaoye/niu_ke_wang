@@ -1,0 +1,49 @@
+题目描述
+有一个X*Y的网格，小团要在此网格上从左上角到右下角，只能走格点且只能向右或向下走。请设计一个算法，计算小团有多少种走法。给定两个
+正整数int x,int y，请返回小团的走法数目。
+输入描述:
+输入包括一行，逗号隔开的两个正整数x和y，取值范围[1,10]。
+输出描述:
+输出包括一行，为走法的数目。
+示例1
+输入
+
+3 2
+输出
+
+10
+
+思路：这是一道简单的动态规划问题，需要注意的是题目有一定迷惑性，是走格点，所以输入3,2.如果走格点，把格点换算成网格的话则成4*3网格。
+然后只能向右和向下，这就是一道简单的动态规划了，首先起始点为0，除此以外，第一行和第一列值为1，这表示从起点到第一行和第一列的走法
+只有1种，然后对于点(i,j).从起点走到点(i,j)的走法为：content[i][j] = content[i - 1][j] + content[i][j - 1].
+
+
+代码：
+import java.util.*;
+
+public class Main{
+    public static void main(String[] args){
+        Scanner in = new Scanner(System.in);
+        while(in.hasNext()){
+            int row = in.nextInt();
+            int line = in.nextInt();
+            int[][] content = new int[row + 1][line + 1];
+            content[0][0] = 0;
+            for(int i = 1; i < line + 1; i++){
+                content[0][i] = 1;
+            }
+            for(int i = 1; i < row + 1; i++){
+                content[i][0] = 1;
+            }
+            for(int i = 1; i < row + 1; i++){
+                for(int j = 1; j < line + 1; j++){
+                    content[i][j] = content[i - 1][j] + content[i][j - 1];
+                }
+            }
+            System.out.println(content[row][line]);
+            
+            
+            
+        }
+    }
+}
