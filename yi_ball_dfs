@@ -1,0 +1,69 @@
+题目描述
+一个袋子里面有n个球，每个球上面都有一个号码(拥有相同号码的球是无区别的)。如果一个袋子是幸运的当且仅当所有球的号码的和大于所有球的号码的积。
+例如：如果袋子里面的球的号码是{1, 1, 2, 3}，这个袋子就是幸运的，因为1 + 1 + 2 + 3 > 1 * 1 * 2 * 3
+你可以适当从袋子里移除一些球(可以移除0个,但是别移除完)，要使移除后的袋子是幸运的。现在让你编程计算一下你可以获得的多少种不同的幸运的袋子。
+输入描述:
+第一行输入一个正整数n(n ≤ 1000)
+第二行为n个数正整数xi(xi ≤ 1000)
+输出描述:
+输出可以产生的幸运的袋子数
+示例1
+输入
+
+3
+1 1 1
+输出
+
+2
+
+嗯，这道题挺难的
+
+思路：这道题用到了深度优先遍历，对于dfs中初始int count=0;我觉得没有问题，因为递归后又是一种新的情况，最终count会变化并返回。
+因为最开始会在外面嵌套循环，
+如果sum > produce, count += 1 + dfs(content, i + 1, sum, product)。即从某一个起点b到坐标i又存在某种符合情况的方案，所以在原先基础上
++1，并且更新坐标到后面一位，重新dfs。每一次递归完成后都会sum -= a[i];product /= a[i];即在除去坐标i(不要坐标i的值)的情况下坐标往后移动
+并继续dfs。
+当content[i] == 1时，因为是else if(content[i] == 1),即在不满足sum > product的情况下，当content[i] == 1,经过sum += content[i], 
+product *= content[i],最差情况也是sum == product，即不符合情况，所以count += dfs(content, i + 1, sum, product);
+如果在不满足sum > product的情况下，content[i] > 1，则break;这个不是很明白。
+for(; i < a.length - 1&& a[i] == a[i + 1]; i++);这个是为了取出掉重复的。。。
+
+
+代码：
+import java.util.*;
+
+public class Main{
+    //public static int total = 0;
+    public static void main(String[] args){
+        Scanner in = new Scanner(System.in);
+        while(in.hasNext()){
+            int number = in.nextInt();
+            int[] content = new int[number];
+            for(int i = 0; i < number; i++){
+                content[i] = in.nextInt();
+            }
+            //如果是arrayList，可以Collections.sort
+            Arrays.sort(content);
+            System.out.println(dfs(content, 0, 0, 1));
+        }
+    }
+    public static int dfs(int[]a, int curIndex, int sum, int product){  
+        int count=0;  
+        for(int i=curIndex;i<a.length;i++){
+            sum += a[i];
+            product *= a[i];
+            if(sum > product){
+                count = count + 1 + dfs(a, i + 1, sum, product);
+            }else if(a[i] == 1){
+                count += dfs(a, i + 1, sum, product);
+            }else{
+                break;
+            }
+            sum -= a[i];
+            product /= a[i];
+            for(; i < a.length - 1&& a[i] == a[i + 1]; i++);
+        }  
+        return count;  
+    }  
+    
+}
